@@ -65,6 +65,12 @@ As you write your .Rmd files, build the book and commit all files, including the
 
 ## this is to test if it works
 As we start coding, the book will be updated after commit
+```{r}
+library(tidyverse)
+library(car)
+data("cars")
+cars %>% head()
+```
 
 
 
