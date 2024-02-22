@@ -21,6 +21,12 @@ You will have to name your book's repository. To differentiate your book's repo 
   - Use the menu item Session > Restart R   
 1. Click on the Build tab in the top right pane
 1. Click on Build Book! 
+```{r}
+install.packages("bookdown")
+install.packages("usethis")
+
+
+```
 
 Nice job! Now let's make it yours, and connect it to GitHub.
 
@@ -43,6 +49,8 @@ Nice job! Now let's make it yours, and connect it to GitHub.
 1. Type `git remote add origin <paste your copied awesome-book github url here>`
 1. Type `git push --set-upstream origin master`
 
+
+
 ## Publish "awesome-book"
 
 Last steps! 
@@ -60,6 +68,8 @@ Now, you're set — you just need to write your book.
 As you write your .Rmd files, build the book and commit all files, including the docs/ folder, and your published book will be updated!
 
 
+## this is to test if it work 
+As we start coding, the book will be updated after commit
 
 
 
