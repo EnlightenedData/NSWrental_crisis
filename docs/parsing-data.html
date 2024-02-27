@@ -252,20 +252,21 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb15-3"><a href="parsing-data.html#cb15-3" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">period =</span> <span class="fu">gsub</span>(<span class="at">pattern =</span> <span class="st">&quot;-?./?Rent-tables-&quot;</span>, <span class="st">&quot;&quot;</span>, <span class="at">ignore.case =</span> T,  period)) <span class="sc">%&gt;%</span> </span>
 <span id="cb15-4"><a href="parsing-data.html#cb15-4" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">period =</span> <span class="fu">gsub</span>(<span class="at">pattern =</span> <span class="st">&quot;-Quarter&quot;</span>, <span class="st">&quot;&quot;</span>, <span class="at">ignore.case =</span> T, period)) <span class="sc">%&gt;%</span> </span>
 <span id="cb15-5"><a href="parsing-data.html#cb15-5" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">period =</span> <span class="fu">gsub</span>(<span class="at">pattern =</span> <span class="st">&quot;</span><span class="sc">\\</span><span class="st">.xlsx$&quot;</span>, <span class="st">&quot;&quot;</span>, period)) <span class="sc">%&gt;%</span> </span>
-<span id="cb15-6"><a href="parsing-data.html#cb15-6" tabindex="-1"></a>    <span class="fu">separate</span>(period, <span class="at">into =</span> <span class="fu">c</span>(<span class="st">&quot;quarter&quot;</span>, <span class="st">&quot;year&quot;</span>), <span class="at">sep =</span> <span class="st">&quot;-&quot;</span>)</span></code></pre></div>
+<span id="cb15-6"><a href="parsing-data.html#cb15-6" tabindex="-1"></a>    <span class="fu">separate</span>(period, <span class="at">into =</span> <span class="fu">c</span>(<span class="st">&quot;quarter&quot;</span>, <span class="st">&quot;year&quot;</span>), <span class="at">sep =</span> <span class="st">&quot;-&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb15-7"><a href="parsing-data.html#cb15-7" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">quarter =</span> <span class="fu">gsub</span>(<span class="st">&quot;./RentDat&quot;</span>, <span class="st">&quot;&quot;</span>, quarter))</span></code></pre></div>
 <pre><code>## Warning: Expected 2 pieces. Additional pieces discarded in 65551 rows [32814,
 ## 32815, 32816, 32817, 32818, 32819, 32820, 32821, 32822, 32823, 32824, 32825,
 ## 32826, 32827, 32828, 32829, 32830, 32831, 32832, 32833, ...].</code></pre>
-<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="parsing-data.html#cb17-1" tabindex="-1"></a>res <span class="sc">%&gt;%</span> <span class="fu">head</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="parsing-data.html#cb17-1" tabindex="-1"></a>res <span class="sc">%&gt;%</span> <span class="fu">tail</span>()</span></code></pre></div>
 <pre><code>## # A tibble: 6 x 14
-##   postcode dwt       beds   wklyrent_q1 wklyrent_q2 wklyrent_q3 newbonds bondnum
-##      &lt;dbl&gt; &lt;chr&gt;     &lt;chr&gt;        &lt;dbl&gt;       &lt;dbl&gt;       &lt;dbl&gt;    &lt;dbl&gt;   &lt;dbl&gt;
-## 1     1790 Flat/Unit 2 Bed~          NA          NA          NA       NA      NA
-## 2     1825 Total     Total           NA          NA          NA       NA      NA
-## 3     1825 Total     2 Bed~          NA          NA          NA       NA      NA
-## 4     1825 Other     Total           NA          NA          NA       NA      NA
-## 5     1825 Other     2 Bed~          NA          NA          NA       NA      NA
-## 6     1860 Total     Total           NA          NA          NA       NA      NA
+##   postcode dwt   beds       wklyrent_q1 wklyrent_q2 wklyrent_q3 newbonds bondnum
+##      &lt;dbl&gt; &lt;chr&gt; &lt;chr&gt;            &lt;dbl&gt;       &lt;dbl&gt;       &lt;dbl&gt;    &lt;dbl&gt;   &lt;dbl&gt;
+## 1     4390 House Total               NA          NA          NA       NA      NA
+## 2     4390 House 4 or more~          NA          NA          NA       NA      NA
+## 3     5341 Total Total               NA          NA          NA       NA      NA
+## 4     5341 Total Not Speci~          NA          NA          NA       NA      NA
+## 5     5341 Other Total               NA          NA          NA       NA      NA
+## 6     5341 Other Not Speci~          NA          NA          NA       NA      NA
 ## # ... with 6 more variables: rentchgqrt &lt;dbl&gt;, rentchgann &lt;dbl&gt;,
 ## #   bondchgqrt &lt;dbl&gt;, bondchgann &lt;dbl&gt;, quarter &lt;chr&gt;, year &lt;chr&gt;</code></pre>
 <p>Many postcodes have no data for weekly rental cost due either to no new rent contracts or small sample size. We can remove these from the dataset.</p>
@@ -288,25 +289,22 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb20-14"><a href="parsing-data.html#cb20-14" tabindex="-1"></a>    <span class="fu">pivot_wider</span>(<span class="at">id_cols =</span> <span class="fu">c</span>(<span class="st">&quot;postcode&quot;</span>, <span class="st">&quot;dwt&quot;</span>, <span class="st">&quot;beds&quot;</span>), </span>
 <span id="cb20-15"><a href="parsing-data.html#cb20-15" tabindex="-1"></a>                <span class="at">names_from =</span> <span class="st">&quot;qrt&quot;</span>, </span>
 <span id="cb20-16"><a href="parsing-data.html#cb20-16" tabindex="-1"></a>                <span class="at">values_from =</span> <span class="st">&quot;wklyrent_q2&quot;</span>)</span></code></pre></div>
-<pre><code>## Warning: Values are not uniquely identified; output will contain list-cols.
-## * Use `values_fn = list` to suppress this warning.
-## * Use `values_fn = length` to identify where the duplicates arise
-## * Use `values_fn = {summary_fun}` to summarise duplicates</code></pre>
-<pre><code>## # A tibble: 2,229 x 12
-##    postcode dwt       beds  `./R-19` `./R-20` `./R-4D` `./R-5M` `./R-6J` `./R-7s`
-##       &lt;dbl&gt; &lt;chr&gt;     &lt;chr&gt; &lt;list&gt;   &lt;list&gt;   &lt;list&gt;   &lt;list&gt;   &lt;list&gt;   &lt;list&gt;  
-##  1     2000 Other     1 Be~ &lt;dbl [4~ &lt;dbl [2~ &lt;dbl [1~ &lt;dbl [1~ &lt;NULL&gt;   &lt;dbl [1~
-##  2     2000 Flat/Unit 1 Be~ &lt;dbl [4~ &lt;dbl [2~ &lt;dbl [1~ &lt;dbl [1~ &lt;dbl [1~ &lt;dbl [1~
-##  3     2000 Flat/Unit 2 Be~ &lt;dbl [4~ &lt;dbl [2~ &lt;dbl [1~ &lt;dbl [1~ &lt;dbl [1~ &lt;dbl [1~
-##  4     2000 Flat/Unit 3 Be~ &lt;dbl [4~ &lt;dbl [2~ &lt;dbl [1~ &lt;dbl [1~ &lt;dbl [1~ &lt;dbl [1~
-##  5     2007 Other     1 Be~ &lt;dbl [4~ &lt;dbl [1~ &lt;dbl [1~ &lt;dbl [1~ &lt;dbl [1~ &lt;dbl [1~
-##  6     2007 Flat/Unit 1 Be~ &lt;dbl [4~ &lt;dbl [2~ &lt;dbl [1~ &lt;dbl [1~ &lt;dbl [1~ &lt;dbl [1~
-##  7     2007 Flat/Unit 2 Be~ &lt;dbl [4~ &lt;dbl [2~ &lt;dbl [1~ &lt;dbl [1~ &lt;dbl [1~ &lt;dbl [1~
-##  8     2007 Flat/Unit 3 Be~ &lt;dbl [1~ &lt;dbl [2~ &lt;dbl [1~ &lt;dbl [1~ &lt;dbl [1~ &lt;dbl [1~
-##  9     2008 Other     1 Be~ &lt;dbl [4~ &lt;dbl [2~ &lt;dbl [1~ &lt;dbl [1~ &lt;NULL&gt;   &lt;dbl [1~
-## 10     2008 Flat/Unit 1 Be~ &lt;dbl [4~ &lt;dbl [2~ &lt;dbl [1~ &lt;dbl [1~ &lt;dbl [1~ &lt;dbl [1~
-## # ... with 2,219 more rows, and 3 more variables: ./R-21 &lt;list&gt;, ./R-22 &lt;list&gt;,
-## #   ./R-23 &lt;list&gt;</code></pre>
+<pre><code>## # A tibble: 2,229 x 21
+##    postcode dwt       beds  `Mar-19` `Jun-19` `Sep-19` `Dec-19` `Jun-20` `Sep-20`
+##       &lt;dbl&gt; &lt;chr&gt;     &lt;chr&gt;    &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;
+##  1     2000 House     2 Be~      850       NA       NA       NA       NA      700
+##  2     2000 Other     1 Be~      575      605      605      589      589      499
+##  3     2000 Other     2 Be~      850       NA      950       NA       NA      715
+##  4     2000 Flat/Unit 1 Be~      660      670      650      650      525      500
+##  5     2000 Flat/Unit 2 Be~      940      915      900      880      750      705
+##  6     2000 Flat/Unit 3 Be~     1300     1380     1275     1400     1025      970
+##  7     2007 Other     1 Be~      419      345      409      395       NA      485
+##  8     2007 Flat/Unit 1 Be~      550      560      510      555      450      450
+##  9     2007 Flat/Unit 2 Be~      750      780      670      890      600      600
+## 10     2008 House     2 Be~      730      730      710       NA      680      610
+## # ... with 2,219 more rows, and 12 more variables: dec-21 &lt;dbl&gt;, Mar-22 &lt;dbl&gt;,
+## #   Jun-22 &lt;dbl&gt;, Sep-22 &lt;dbl&gt;, Dec-22 &lt;dbl&gt;, Mar-23 &lt;dbl&gt;, Jun-23 &lt;dbl&gt;,
+## #   Sep-23 &lt;dbl&gt;, a/I-4D &lt;dbl&gt;, a/I-5M &lt;dbl&gt;, a/I-6J &lt;dbl&gt;, a/i-7s &lt;dbl&gt;</code></pre>
 
 </div>
             </section>

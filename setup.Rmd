@@ -113,9 +113,10 @@ res <- res %>%
     mutate(period = gsub(pattern = "-?./?Rent-tables-", "", ignore.case = T,  period)) %>% 
     mutate(period = gsub(pattern = "-Quarter", "", ignore.case = T, period)) %>% 
     mutate(period = gsub(pattern = "\\.xlsx$", "", period)) %>% 
-    separate(period, into = c("quarter", "year"), sep = "-")
+    separate(period, into = c("quarter", "year"), sep = "-") %>% 
+    mutate(quarter = gsub("./RentDat", "", quarter))
 
-res %>% head()
+res %>% tail()
 ```
 
 Many postcodes have no data for weekly rental cost due either to no new rent contracts or small sample size. We can remove these from the dataset.
