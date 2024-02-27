@@ -7,5 +7,5 @@ turn-bookdown-tutorial-into-awesome-book
 publish-awesome-book
 moving-forward
 this-is-to-test-if-it-works
+parsing-data
 write
-output-bookdowngitbook

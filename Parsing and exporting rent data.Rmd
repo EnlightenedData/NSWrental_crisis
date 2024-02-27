@@ -1,0 +1,81 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
+
+Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Ctrl+Shift+Enter*. 
+
+# Combine and parsing data downloaded MANUALLY from the 
+# page <- "https://www.facs.nsw.gov.au/resources/statistics/rent-and-sales/back-issues?result_536530_result_page=1&q=rent%20table&filtered=true"
+
+```{r}
+library(tidyverse)
+
+res <- temp <- NULL
+for (i in 1: length(sfiles)){
+    temp <- readxl::read_xlsx(sfiles[i], sheet = 3, 
+                              col_names = colnm,  skip = 9) %>% 
+        mutate(period = unlist(sfiles[i])) # add the file name to know which quarter
+    
+    res <- bind_rows(res, temp)
+    }
+
+res <- res %>% 
+    # head(1000) %>% # TODO remove
+    select(-starts_with("dum")) %>% 
+    mutate(across(wklyrent_q1:bondchgann, ~ as.numeric(.)))
+
+res %>% 
+    mutate(period = gsub(pattern = "./Issue-\\d{3}-\\d{4}", "", period)) %>% 
+    mutate(period = gsub(pattern = "-?./?Rent-tables-", "", ignore.case = T,  period)) %>% 
+    mutate(period = gsub(pattern = "-Quarter", "", ignore.case = T, period)) %>% 
+    mutate(period = gsub(pattern = "\\.xlsx$", "", period)) %>% 
+    separate(period, into = c("quarter", "year"), sep = "-")
+
+
+res <- res %>% 
+    # filter(grepl("2023", period)) %>%
+    # tail(1000) %>% # TODO remove
+    mutate(period = gsub(pattern = "./Issue-\\d{3}", "", ignore.case = T, period)) %>% 
+    mutate(period = gsub(pattern = "^-\\d{4}", "", period)) %>% 
+    mutate(period = gsub(pattern = "-?./?Rent-tables-", "", ignore.case = T,  period)) %>% 
+    mutate(period = gsub(pattern = "-Quarter", "", ignore.case = T, period)) %>% 
+    mutate(period = gsub(pattern = "\\.xlsx$", "", period)) %>% 
+    separate(period, into = c("quarter", "year"), sep = "-") %>% 
+    filter(rowSums(is.na(.)) < 8) %>% 
+    filter(dwt != "Total" & beds != "Total") #%>% 
+    #group_by(year) %>% summarise(n = n())
+res %>% 
+    group_by(beds) %>% summarise(n = n())
+
+selacc <- c("1 Bedroom", "2 Bedrooms", "3 Bedrooms", "4 or more Bedrooms")
+
+res %>% 
+    # head() %>% 
+    select(postcode, quarter, year, dwt, beds, wklyrent_q2) %>% 
+    filter(beds %in% selacc) %>% 
+    mutate(month = substr(quarter, 1,3)) %>% 
+    mutate(dt2 = paste0(year,"-", quarter, "-01")) %>%
+    mutate(qrt = paste0(month,"-",substr(year,3,4))) %>%
+    mutate(dt = as.Date(dt2, format = "%Y-%B-%d")) %>% 
+    filter(!is.na(wklyrent_q2)) %>% 
+    select(postcode, dt, qrt, dwt, beds, wklyrent_q2) %>%
+    arrange(dt) %>% 
+    pivot_wider(id_cols = c("postcode", "dwt", "beds"), 
+                names_from = "qrt", 
+                values_from = "wklyrent_q2") %>% 
+    write.csv2("C:/Users/Chinh Ho/OneDrive - The University of Sydney (Staff)/Teaching/ITLS6111/DataITLS6111/weeklyRent_postcode.csv", row.names = F)
+    filter(postcode == 2226 & dwt == "Flat/Unit")
+    
+
+```
+
+
+
+```{r}
+res %>% 
+    filter(postcode == 2018 & quarter == "December")
+```
+

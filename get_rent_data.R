@@ -28,8 +28,10 @@ convfn <- function(line, marker, page){
 #they will save in your working directory
 #use setwd() to change if needed
 print(getwd())
-
-setwd(paste0(getwd(), "/RentData")) 
+mainDir <- getwd()
+subDir <- "RentData"
+dir.create(file.path(mainDir, subDir), showWarnings = FALSE)
+setwd(file.path(mainDir, subDir))
 
 #get the .zip files and download them
 sapply(a[loc.zip], 
